@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EchoTrace – AI Risk Map</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f1f3f4;
+    }
+    header {
+      background: #1a73e8;
+      color: white;
+      padding: 14px;
+      text-align: center;
+    }
+    #map {
+      height: 90vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h2>EchoTrace</h2>
+    <p>Community Early-Warning System using Google Gemini</p>
+  </header>
+
+  <!-- REQUIRED MAP CONTAINER -->
+  <div id="map"></div>
+
+  <!-- ================= FIREBASE + FIRESTORE ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // 🔵 YOUR FIREBASE PROJECT CONFIG (ALREADY CORRECT)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYAfcQC30Q2DS9lInTNGBdCjgOUqjaySs",
+      authDomain: "echotrace-483406.firebaseapp.com",
+      projectId: "echotrace-483406"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔴 IMPORTANT: expose initMap to window
+    window.initMap = async function () {
+      const center = { lat: 22.92, lng: 88.39 };
+
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 16,
+        center: center
+      });
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "reports"));
+
+        querySnapshot.forEach((doc) => {
+          const d = doc.data();
+          if (!d.lat || !d.lng || !d.severity) return;
+
+          new google.maps.Circle({
+            map: map,
+            center: { lat: d.lat, lng: d.lng },
+            radius: d.severity * 40,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35
+          });
+        });
+      } catch (err) {
+        console.error("Firestore error:", err);
+      }
+    };
+  </script>
+
+  <!-- ================= GOOGLE MAPS ================= -->
+  <!-- 🔴 REPLACE ONLY THE KEY VALUE BELOW -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYAfcQC30Q2DS9lInTNGBdCjgOUqjaySs&callback=initMap"
+    async defer>
+  </script>
+
+</body>
+</html>
+
+
