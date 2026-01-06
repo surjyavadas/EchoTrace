@@ -88,8 +88,8 @@ Google Maps (Risk Visualization)
 ---
 
 ## 👥 Team
-- 👤 Team Name: **EchoTrace**  
-- 👤 Team Lead: *(Your Name)*  
+- 👤 Team Name: **ProtonPulse**  
+- 👤 Team Lead: *(Surjyava Das)*  
 
 ---
 
